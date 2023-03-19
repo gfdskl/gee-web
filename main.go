@@ -1,9 +1,7 @@
 package main
 
 import (
-	"fmt"
 	"gee"
-	"net/http"
 )
 
 func main() {
@@ -13,10 +11,11 @@ func main() {
 	r.Run(":9999")
 }
 
-func handler(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("hello world\n"))
+func handler(c *gee.Context) {
+	html := "<h2>hello</h2>"
+	c.HTML(200, html)
 }
 
-func counter(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "%s\n", r.URL.Path)
+func counter(c *gee.Context) {
+	c.Data(200, []byte("fadsfsa"))
 }
