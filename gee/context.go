@@ -8,11 +8,16 @@ import (
 )
 
 type Context struct {
-	Writer     http.ResponseWriter
-	Req        *http.Request
-	Path       string
-	Method     string
+	// 基本信息
+	Writer http.ResponseWriter
+	Req    *http.Request
+	// req信息
+	Path   string
+	Method string
+	// writer信息
 	StatusCode int
+	// 动态路由参数
+	Params map[string]string
 }
 
 func newContext(w http.ResponseWriter, r *http.Request) *Context {
@@ -22,6 +27,10 @@ func newContext(w http.ResponseWriter, r *http.Request) *Context {
 		Path:   r.URL.Path,
 		Method: r.Method,
 	}
+}
+
+func (context *Context) Param(key string) string {
+	return context.Params[key]
 }
 
 func (context *Context) Query(key string) string {

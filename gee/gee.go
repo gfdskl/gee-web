@@ -7,18 +7,17 @@ import (
 type HandleFunc func(context *Context)
 
 type Engine struct {
-	router map[string]HandleFunc
+	router *Router
 }
 
 func New() *Engine {
 	return &Engine{
-		router: make(map[string]HandleFunc),
+		router: newRouter(),
 	}
 }
 
 func (engine *Engine) addRouter(method string, pattern string, handle HandleFunc) {
-	key := method + "-" + pattern
-	engine.router[key] = handle
+	engine.router.addRouter(method, pattern, handle)
 }
 
 func (engine *Engine) GET(pattern string, handle HandleFunc) {
@@ -30,13 +29,8 @@ func (engine *Engine) POST(pattern string, handle HandleFunc) {
 }
 
 func (engine *Engine) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	key := r.Method + "-" + r.URL.Path
 	context := newContext(w, r)
-	if handle, ok := engine.router[key]; ok {
-		handle(context)
-	} else {
-		http.Error(w, "not found", 404)
-	}
+	engine.router.handle(context)
 }
 
 func (engine *Engine) Run(addr string) {
